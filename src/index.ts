@@ -11,6 +11,7 @@ import {
 } from "discord.js";
 import path from "node:path";
 import fs from "node:fs";
+import { fileURLToPath, pathToFileURL } from "url";
 
 interface ClientWithCommands extends Client {
   commands: Collection<string, any>;
@@ -37,7 +38,9 @@ const main = async (): Promise<void> => {
   process.on("SIGINT", cleanup);
   process.on("SIGTERM", cleanup);
 
-  const commandsDirPath = path.join(__dirname, "commands");
+  const a = fileURLToPath(import.meta.url);
+  const b = path.dirname(a);
+  const commandsDirPath = path.join(b, "commands");
   const commandsDir = fs.readdirSync(commandsDirPath);
   console.log(`to load: ${commandsDir}`);
 
@@ -45,7 +48,7 @@ const main = async (): Promise<void> => {
     const fPath = path.join(commandsDirPath, f);
     if (!fs.existsSync(fPath)) continue;
     console.log(`loading ${fPath}`);
-    const command = require(fPath);
+    const command = await import(pathToFileURL(fPath).href);
     if (command.data === undefined || !command.execute === undefined) continue;
     const data = command.data as SlashCommandBuilder;
     client.commands.set(data.name, command);
