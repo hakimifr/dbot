@@ -1,4 +1,4 @@
-import { SlashCommandBuilder, ChatInputCommandInteraction } from "discord.js";
+import { SlashCommandBuilder, type ChatInputCommandInteraction } from "discord.js";
 
 const execute = async (i: ChatInputCommandInteraction): Promise<void> => {
   i.reply("hi bro");
