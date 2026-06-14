@@ -8,6 +8,7 @@ import {
   MessageFlags,
   REST,
   Routes,
+  type Message,
 } from "discord.js";
 import path from "node:path";
 import fs from "node:fs";
@@ -21,7 +22,13 @@ const token = process.env.DISCORD_BOT_TOKEN;
 const clientId = process.env.DISCORD_CLIENT_ID;
 if (!token) throw new Error("discord bot token is not set");
 if (!clientId) throw new Error("discord client id is not set");
-const client = new Client({ intents: [GatewayIntentBits.Guilds] }) as ClientWithCommands;
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+}) as ClientWithCommands;
 client.commands = new Collection();
 
 const cleanup = async (s: string): Promise<void> => {
@@ -81,6 +88,11 @@ const main = async (): Promise<void> => {
         });
       }
     }
+  });
+
+  client.on(Events.MessageCreate, async (m: Message) => {
+    if (m.author.bot) return;
+    m.reply(`## Message received\nid: \`${m.id}\`\ncontent: ${m.content}`);
   });
 
   const commands: any = [];
