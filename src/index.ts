@@ -12,6 +12,7 @@ import {
 } from "discord.js";
 import path from "node:path";
 import fs from "node:fs";
+import { antispamMessageCallback } from "./antispam";
 import { fileURLToPath, pathToFileURL } from "url";
 
 interface ClientWithCommands extends Client {
@@ -96,6 +97,8 @@ const main = async (): Promise<void> => {
     if (!m.mentions.has(client.user!.id)) return;
     m.reply(`## Message received\nid: \`${m.id}\`\ncontent: ${m.content}`);
   });
+
+  client.on(Events.MessageCreate, antispamMessageCallback);
 
   const commands: any = [];
   client.commands.forEach((c) => commands.push(c.data.toJSON()));
