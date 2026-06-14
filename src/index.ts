@@ -92,6 +92,8 @@ const main = async (): Promise<void> => {
 
   client.on(Events.MessageCreate, async (m: Message) => {
     if (m.author.bot) return;
+    if (m.content.includes("@here") || m.content.includes("@everyone")) return;
+    if (!m.mentions.has(client.user!.id)) return;
     m.reply(`## Message received\nid: \`${m.id}\`\ncontent: ${m.content}`);
   });
 
