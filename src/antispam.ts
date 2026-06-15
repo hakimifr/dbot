@@ -21,18 +21,18 @@ const antispamMessageCallback = async (m: Message): Promise<void> => {
 
   const member = await m.guild?.members.fetch(m.author.id);
   const me = await m.guild?.members.fetchMe();
+  if (member!.roles.highest.position >= me!.roles.highest.position) {
+    console.log(
+      `ignoring user with higher role: ${m.author.globalName}/${m.author.displayName}, id: ${m.author.id}`,
+    );
+    return;
+  }
   if (!member?.bannable) {
     console.warn(`cannot ban ${m.author.globalName}/${m.author.displayName}, perhaps higher role?`);
     logChannel.then((c) => {
       if (!c?.isTextBased()) return;
       c.send(`cannot ban ${m.author.toString()} [id: \`${m.author.id}\`]`);
     });
-    return;
-  }
-  if (member!.roles.highest.position >= me!.roles.highest.position) {
-    console.log(
-      `ignoring user with higher role: ${m.author.globalName}/${m.author.displayName}, id: ${m.author.id}`,
-    );
     return;
   }
 
