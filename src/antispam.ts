@@ -28,6 +28,13 @@ const antispamMessageCallback = async (m: Message): Promise<void> => {
     });
     return;
   }
+  if (member!.roles.highest.position > m.guild?.members.me?.roles.highest.position!) {
+    console.log(
+      `ignoring user with higher role: ${m.author.globalName}/${m.author.displayName}, id: ${m.author.id}`,
+    );
+    return;
+  }
+
   console.log(`banning ${m.author}`);
   await m.guild?.bans.create(m.author, { reason: "message sent in void chat" });
   await m.delete();
